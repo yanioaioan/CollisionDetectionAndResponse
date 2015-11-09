@@ -1,4 +1,4 @@
-TARGET +=CollisionDetectionAndResponse
+TARGET =CollisionDetectionAndResponse
 QT += core gui opengl
 QT += widgets
 
@@ -11,7 +11,7 @@ FORMS += \
 
 HEADERS += include/*.h \
 
-OBJECTS_DIR+=obj
+OBJECTS_DIR =obj
 
 LIBS += -L/$(HOME)/NGL/lib -l NGL
 INCLUDEPATH += $$(HOME)/NGL/include/

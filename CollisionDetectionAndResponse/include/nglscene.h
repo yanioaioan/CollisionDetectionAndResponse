@@ -24,6 +24,7 @@ public:
 protected:
     void initializeGL ();
     void resizeGL (QResizeEvent *_event);
+    void resizeGL (int _w, int _h );
     void loadMatricesToShader(ngl::Transformation &_transform,const ngl::Mat4 &_globalTx, ngl::Camera *_cam) const;
     void paintGL ();    
     void createPrimitives();

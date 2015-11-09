@@ -47,7 +47,7 @@ void NGLScene::initializeGL ()
     glClearColor (0.4,0.4,0.4,1);
     std::cout<<"Initializing NGL\n";
 
-    ngl::Vec3 from(0,10,25);ngl::Vec3 to(0,0,0);ngl::Vec3 up(0,1,0);
+    ngl::Vec3 from(0,1,15);ngl::Vec3 to(0,0,0);ngl::Vec3 up(0,1,0);
     m_cam = new ngl::Camera(from,to,up);
     m_cam->setShape(45,(float)720/576,0.05,350);
 
@@ -77,6 +77,18 @@ void NGLScene::resizeGL (QResizeEvent *_event )
 {
     int w=_event->size().width();
     int h=_event->size().height();
+    // set the viewport for openGL
+    glViewport(0,0,w,h);
+    // now set the camera size values as the screen size has changed
+    m_cam->setShape(45,(float)w/h,0.05,350);
+    update ();
+}
+
+
+void NGLScene::resizeGL (int _w, int _h )
+{
+    int w=_w*devicePixelRatio();
+    int h=_h*devicePixelRatio();
     // set the viewport for openGL
     glViewport(0,0,w,h);
     // now set the camera size values as the screen size has changed
@@ -145,6 +157,7 @@ void NGLScene::paintGL ()
     //draw the ball according to its center
     m_transform.setPosition (myball.m_center);
     loadMatricesToShader (m_transform,m_mouseGlobalTX, m_cam);
+
     shader->setShaderParam4f("Colour",1,0,0,1);
     prim->draw ("ball");
 
@@ -153,6 +166,12 @@ void NGLScene::paintGL ()
     loadMatricesToShader (m_transform,m_mouseGlobalTX, m_cam);
     shader->setShaderParam4f("Colour",1,1,0,1);
     prim->draw ("ground");
+
+
+    glEnable(GL_DEPTH_TEST);
+    // enable multisampling for smoother drawing
+    glEnable(GL_MULTISAMPLE);
+
 
 }
 

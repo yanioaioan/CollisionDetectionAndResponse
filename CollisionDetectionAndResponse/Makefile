@@ -545,6 +545,9 @@ moc_mainwindow.cpp: /opt/qt/5.5/gcc_64/include/QtWidgets/QMainWindow \
 		../../../../NGL/include/ngl/Transformation.h \
 		../../../../NGL/include/ngl/NGLassert.h \
 		include/collision.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QWidget \
 		include/mainwindow.h
 	/opt/qt/5.5/gcc_64/bin/moc $(DEFINES) -I/opt/qt/5.5/gcc_64/mkspecs/linux-clang -I/home/yioannidis/QtStuff/Projects/CollisionDetectionAndResponse/CollisionDetectionAndResponse -I/home/yioannidis/NGL/include -I/home/yioannidis/QtStuff/Projects/CollisionDetectionAndResponse/CollisionDetectionAndResponse/include -I/opt/qt/5.5/gcc_64/include -I/opt/qt/5.5/gcc_64/include/QtOpenGL -I/opt/qt/5.5/gcc_64/include/QtWidgets -I/opt/qt/5.5/gcc_64/include/QtGui -I/opt/qt/5.5/gcc_64/include/QtCore include/mainwindow.h -o moc_mainwindow.cpp
 
@@ -678,6 +681,9 @@ moc_nglscene.cpp: ../../../../NGL/include/ngl/Vec3.h \
 		../../../../NGL/include/ngl/Transformation.h \
 		../../../../NGL/include/ngl/NGLassert.h \
 		include/collision.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QWidget \
 		include/nglscene.h
 	/opt/qt/5.5/gcc_64/bin/moc $(DEFINES) -I/opt/qt/5.5/gcc_64/mkspecs/linux-clang -I/home/yioannidis/QtStuff/Projects/CollisionDetectionAndResponse/CollisionDetectionAndResponse -I/home/yioannidis/NGL/include -I/home/yioannidis/QtStuff/Projects/CollisionDetectionAndResponse/CollisionDetectionAndResponse/include -I/opt/qt/5.5/gcc_64/include -I/opt/qt/5.5/gcc_64/include/QtOpenGL -I/opt/qt/5.5/gcc_64/include/QtWidgets -I/opt/qt/5.5/gcc_64/include/QtGui -I/opt/qt/5.5/gcc_64/include/QtCore include/nglscene.h -o moc_nglscene.cpp
 
@@ -962,7 +968,10 @@ obj/main.o: src/main.cpp /opt/qt/5.5/gcc_64/include/QtWidgets/QApplication \
 		../../../../NGL/include/ngl/VertexArrayObject.h \
 		../../../../NGL/include/ngl/Transformation.h \
 		../../../../NGL/include/ngl/NGLassert.h \
-		include/collision.h
+		include/collision.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/main.o src/main.cpp
 
 obj/mainwindow.o: src/mainwindow.cpp include/mainwindow.h \
@@ -1101,6 +1110,9 @@ obj/mainwindow.o: src/mainwindow.cpp include/mainwindow.h \
 		../../../../NGL/include/ngl/Transformation.h \
 		../../../../NGL/include/ngl/NGLassert.h \
 		include/collision.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QWidget \
 		ui_mainwindow.h \
 		/opt/qt/5.5/gcc_64/include/QtCore/QVariant \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/QAction \
@@ -1151,8 +1163,7 @@ obj/mainwindow.o: src/mainwindow.cpp include/mainwindow.h \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractbutton.h \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/QSpacerItem \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/QStatusBar \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qstatusbar.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QWidget
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qstatusbar.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/mainwindow.o src/mainwindow.cpp
 
 obj/nglscene.o: src/nglscene.cpp /opt/qt/5.5/gcc_64/include/QtGui/QMouseEvent \
@@ -1292,6 +1303,9 @@ obj/nglscene.o: src/nglscene.cpp /opt/qt/5.5/gcc_64/include/QtGui/QMouseEvent \
 		../../../../NGL/include/ngl/Transformation.h \
 		../../../../NGL/include/ngl/NGLassert.h \
 		include/collision.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QWidget \
 		../../../../NGL/include/ngl/NGLInit.h \
 		../../../../NGL/include/ngl/Singleton.h \
 		/opt/qt/5.5/gcc_64/include/QtCore/QMutexLocker \
