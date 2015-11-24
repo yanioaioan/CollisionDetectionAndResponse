@@ -4,12 +4,12 @@ QT += widgets
 
 TEMPLATE = app
 CONFIG +=c++11
-SOURCES += src/*.cpp \
+SOURCES += src/*.cpp
 
 FORMS += \
     mainwindow.ui
 
-HEADERS += include/*.h \
+HEADERS += include/*.h
 
 OBJECTS_DIR =obj
 

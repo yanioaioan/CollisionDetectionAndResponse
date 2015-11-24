@@ -18,6 +18,7 @@ const static float ZOOM=0.1;
 const static float dt=1/60.0f;
 ngl::Vec3 planeCenter=ngl::Vec3(0,0,0);//plane is defaulted on 0,0,0 at the moment, for demo purposes
 ngl::Vec3 planeNormal=ngl::Vec3(0,1,0);//hence... plane's normal would be 0,1,0 at the moment, for demo purposes
+const static float gravity=-9.81;
 
 NGLScene::NGLScene()
 {
@@ -47,7 +48,7 @@ void NGLScene::initializeGL ()
     glClearColor (0.4,0.4,0.4,1);
     std::cout<<"Initializing NGL\n";
 
-    ngl::Vec3 from(0,1,15);ngl::Vec3 to(0,0,0);ngl::Vec3 up(0,1,0);
+    ngl::Vec3 from(0,1,35);ngl::Vec3 to(0,0,0);ngl::Vec3 up(0,1,0);
     m_cam = new ngl::Camera(from,to,up);
     m_cam->setShape(45,(float)720/576,0.05,350);
 
@@ -63,7 +64,7 @@ void NGLScene::initializeGL ()
     //create the ball and the ground
     createPrimitives();
 
-    myball.m_center=ngl::Vec3(2,2,0);myball.m_radius=1;myball.m_velocity=ngl::Vec3(1,-1,0);
+    myball.m_center=ngl::Vec3(2,10,0);myball.m_radius=1;myball.m_velocity=ngl::Vec3(1,-1,0);
 
     glEnable(GL_DEPTH_TEST);
     // enable multisampling for smoother drawing
@@ -194,12 +195,70 @@ void NGLScene::updateBall()
     //recalculate velocity if ball collided to the ground collided
     bool collided = Collision::SphereToPlane (myball, planeCenter, planeNormal);
 
+
+
+    //    Accel = F / mass,
+    //    Vel += Accel * deltaTime,
+    //    Pos = Vel * time.
+
+    float ballMass=1;
+    float planeMass=10;
+    ngl::Vec3 prevVel=0;
+    ngl::Vec3 relativeVel=0;
+    ngl::Vec3 prevBallPos=0;
+    ngl::Vec3 prevAccel=0;
+
+
+
+    //calculate force
+    ngl::Vec3 force;
+    force.m_y= gravity * ballMass;
+    //calculate acceleration
+    ngl::Vec3 accel = force / ballMass;
+    std::cout<<accel.m_x<<accel.m_y<<accel.m_z<<std::endl;
+    //calculate velocity Euler
+    //    myball.m_velocity += accel * dt;
+
+    //calculate velocity Velocity Verlet
+    prevVel=myball.m_velocity;
+    myball.m_velocity = myball.m_velocity + accel * dt;
+
+
+    //check if collided
     if (collided)
         myball.m_velocity = calculateCollisionResponse();
 
 
-    //update ball posiiton based on velocity
-    myball.m_center+= myball.m_velocity *dt;
+    //FRICTION CALCULATION
+
+//    //calculate relative velocity
+//    relativeVel=myball.m_velocity-prevVel;
+//    ngl::Vec3 tangentVector= relativeVel - relativeVel.dot(planeNormal)*planeNormal;
+//    tangentVector.normalize();
+
+//    // find magnitude
+//    float jt = -relativeVel.dot(tangentVector);
+//    jt = jt / (1 / ballMass + 1 / planeMass);
+
+//    //calculate friction
+
+//    //Save previous velocity
+//    prevVel = myball.m_velocity;
+
+
+
+
+    //update ball position based on velocity (Forward Euler Integration)
+    //    myball.m_center+= myball.m_velocity *dt;
+
+    //update ball position based on velocity (Velocity Verletr Integration)
+    myball.m_center = myball.m_center + (prevVel + myball.m_velocity) * 0.5 * dt;
+
+
+
+
+
+
 }
 
 
