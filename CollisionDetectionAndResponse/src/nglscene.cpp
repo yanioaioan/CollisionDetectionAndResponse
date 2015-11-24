@@ -16,8 +16,10 @@ const static float INCREMENT=0.01;
 //----------------------------------------------------------------------------------------------------------------------
 const static float ZOOM=0.1;
 const static float dt=1/60.0f;
-ngl::Vec3 planeCenter=ngl::Vec3(0,0,0);//plane is defaulted on 0,0,0 at the moment, for demo purposes
+ngl::Vec3 planeCenter=ngl::Vec3(0,0.01,0);//plane is defaulted on 0,0,0 at the moment, for demo purposes
 ngl::Vec3 planeNormal=ngl::Vec3(0,1,0);//hence... plane's normal would be 0,1,0 at the moment, for demo purposes
+ngl::Vec3 ballcenterInit=ngl::Vec3(5,10,0);
+
 const static float gravity=-9.81;
 
 NGLScene::NGLScene()
@@ -41,14 +43,13 @@ NGLScene::~NGLScene()
 //    Init->NGLQuit();
 }
 
-
 void NGLScene::initializeGL ()
 {
     ngl::NGLInit::instance();
     glClearColor (0.4,0.4,0.4,1);
     std::cout<<"Initializing NGL\n";
 
-    ngl::Vec3 from(0,1,35);ngl::Vec3 to(0,0,0);ngl::Vec3 up(0,1,0);
+    ngl::Vec3 from(-0,40,55);ngl::Vec3 to(0,0,0);ngl::Vec3 up(0,1,0);
     m_cam = new ngl::Camera(from,to,up);
     m_cam->setShape(45,(float)720/576,0.05,350);
 
@@ -64,7 +65,13 @@ void NGLScene::initializeGL ()
     //create the ball and the ground
     createPrimitives();
 
-    myball.m_center=ngl::Vec3(2,10,0);myball.m_radius=1;myball.m_velocity=ngl::Vec3(1,-1,0);
+
+    planeNormal=ballcenterInit-planeCenter;
+    planeNormal.normalize();
+
+    myball.m_center=ballcenterInit;
+    myball.m_radius=1;
+    myball.m_velocity=ngl::Vec3(0.1,0,0);
 
     glEnable(GL_DEPTH_TEST);
     // enable multisampling for smoother drawing
@@ -132,6 +139,8 @@ void NGLScene::loadMatricesToShader(ngl::Transformation &_transform, const ngl::
 //float end=1.0;
 //float interpVal=0.0;
 
+float planeThetaCos;
+
 void NGLScene::paintGL ()
 {
     // clear the screen and depth buffer
@@ -164,6 +173,19 @@ void NGLScene::paintGL ()
 
     //draw the ground on the origin
     m_transform.setPosition (0,0,0);
+
+    //rotate the plane according to the initial position of the ballcenterInit
+//    planeThetaCos = acos((planeCenter.dot(ballcenterInit)) / (planeCenter.length() *  ballcenterInit.length()))*(180/M_PI);
+
+    planeCente.normalize();ballcenterInit.normalize();
+    planeThetaCos = acos((planeCenter.dot(ballcenterInit));
+    ngl::Vec3 cross = (planeCenter.cross(ballcenterInit););
+    if ((planeNormal, cross) < 0) { // Or > 0
+      planeThetaCos = -planeThetaCos;
+    }
+
+    m_transform.setRotation(0,0,-planeThetaCos);
+
     loadMatricesToShader (m_transform,m_mouseGlobalTX, m_cam);
     shader->setShaderParam4f("Colour",1,1,0,1);
     prim->draw ("ground");
@@ -193,7 +215,10 @@ void NGLScene::updateBall()
 //    myball.m_velocity += acceleration*dt;
 
     //recalculate velocity if ball collided to the ground collided
+
+
     bool collided = Collision::SphereToPlane (myball, planeCenter, planeNormal);
+
 
 
 
