@@ -29,7 +29,7 @@ protected:
     void paintGL ();    
     void createPrimitives();
     void updateBall();
-    ngl::Vec3 calculateCollisionResponse();
+    ngl::Vec3 calculateCollisionResponse(const ngl::Vec3 &normal);
 
 
     void timerEvent( QTimerEvent *_event );
@@ -93,6 +93,7 @@ private:
     bool m_animate;
     ngl::Camera *m_cam;
 
+    ngl::Mat4 matrixFromAxisAngle(ngl::Vec3 axis, float angle);
 
 
 

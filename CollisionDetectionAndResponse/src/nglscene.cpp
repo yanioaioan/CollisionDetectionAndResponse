@@ -18,7 +18,10 @@ const static float ZOOM=0.1;
 const static float dt=1/60.0f;
 ngl::Vec3 planeCenter=ngl::Vec3(0,0.01,0);//plane is defaulted on 0,0,0 at the moment, for demo purposes
 ngl::Vec3 planeNormal=ngl::Vec3(0,1,0);//hence... plane's normal would be 0,1,0 at the moment, for demo purposes
-ngl::Vec3 ballcenterInit=ngl::Vec3(5,10,0);
+ngl::Vec3 planeNormal2=ngl::Vec3(0,1,0);//hence... plane's normal would be 0,1,0 at the moment, for demo purposes
+
+ngl::Vec3 ballcenterInit=ngl::Vec3(5,20,0);
+ngl::Vec3 artificialMirrorBallvec((-5,20,0));//used to create the 2nd ground
 
 const static float gravity=-9.81;
 
@@ -43,6 +46,8 @@ NGLScene::~NGLScene()
 //    Init->NGLQuit();
 }
 
+ngl::Vec3 rotationAxis=0;
+
 void NGLScene::initializeGL ()
 {
     ngl::NGLInit::instance();
@@ -65,9 +70,17 @@ void NGLScene::initializeGL ()
     //create the ball and the ground
     createPrimitives();
 
-
+    //Explixitly define the plane normal, based on the position of the ball
     planeNormal=ballcenterInit-planeCenter;
     planeNormal.normalize();
+
+    //artificially specify planeNormal2 as the mirror of planeNormal in X axis
+    artificialMirrorBallvec=ballcenterInit;
+    artificialMirrorBallvec.m_x= - ballcenterInit.m_x;//ONLY MIRROR in X axis
+    planeNormal2=artificialMirrorBallvec-planeCenter;;
+    planeNormal2.normalize();
+
+
 
     myball.m_center=ballcenterInit;
     myball.m_radius=1;
@@ -108,6 +121,7 @@ void NGLScene::createPrimitives()
 {
     ngl::VAOPrimitives *plane = ngl::VAOPrimitives::instance ();
     plane->createTrianglePlane ("ground", 50, 50, 10, 10,10);
+    plane->createTrianglePlane ("ground2", 50, 50, 10, 10,10);//used to mirror the first one
 
     ngl::VAOPrimitives *sphere = ngl::VAOPrimitives::instance ();
     sphere->createSphere ("ball", 1,30);
@@ -123,7 +137,7 @@ void NGLScene::loadMatricesToShader(ngl::Transformation &_transform, const ngl::
     ngl::Mat4 MVP;
     ngl::Mat3 normalMatrix;
     ngl::Mat4 M;
-    M=m_mouseGlobalTX*_transform.getMatrix ();
+    M=_transform.getMatrix ()*m_mouseGlobalTX;
     MV=  M*m_cam->getViewMatrix();
     MVP=  MV*m_cam->getProjectionMatrix();
     normalMatrix=MV;
@@ -171,24 +185,134 @@ void NGLScene::paintGL ()
     shader->setShaderParam4f("Colour",1,0,0,1);
     prim->draw ("ball");
 
-    //draw the ground on the origin
-    m_transform.setPosition (0,0,0);
+
 
     //rotate the plane according to the initial position of the ballcenterInit
-//    planeThetaCos = acos((planeCenter.dot(ballcenterInit)) / (planeCenter.length() *  ballcenterInit.length()))*(180/M_PI);
+//    planeThetaCos = atan2((planeCenter.dot(ballcenterInit)) / (planeCenter.length() *  ballcenterInit.length()))*(180/M_PI);
 
-    planeCente.normalize();ballcenterInit.normalize();
-    planeThetaCos = acos((planeCenter.dot(ballcenterInit));
-    ngl::Vec3 cross = (planeCenter.cross(ballcenterInit););
-    if ((planeNormal, cross) < 0) { // Or > 0
-      planeThetaCos = -planeThetaCos;
-    }
+//    planeCenter.normalize();
+//    ballcenterInit.normalize();
+//    planeThetaCos = acos((planeCenter.dot(ballcenterInit)))*(180/M_PI);
 
-    m_transform.setRotation(0,0,-planeThetaCos);
+
+//    ngl::Vec3 cross = (ballcenterInit.cross(planeCenter));
+//    cross.normalize();
+//    if (cross.dot( planeNormal) < 0) { // Or > 0
+//      planeThetaCos = -planeThetaCos;
+//    }
+
+    
+
+    
+//    float sina = (ballcenterInit.cross(planeCenter)).length() / ( ballcenterInit.length() * planeCenter.length() );
+//    float cosa = (ballcenterInit.dot(planeCenter) / ( ballcenterInit.length() * planeCenter.length() ));
+//    float angle = atan2( sina, cosa )*(180/M_PI);
+
+
+
+
+//    ballcenterInit.normalize();
+//    planeCenter.normalize();
+//    float angle = acos(ballcenterInit.dot(planeCenter))*(180/M_PI);
+
+//    float sign = planeNormal.dot( ballcenterInit.cross(planeCenter) );
+//    if(sign>0)
+//    {
+//        angle=-angle;
+//    }
+
+
+
+
+
+//    float dot = ballcenterInit.dot(planeCenter);
+//    float lenSq1 = ballcenterInit.lengthSquared();
+//    float lenSq2 = planeCenter.lengthSquared();
+//    float angle = acos(dot/sqrt(lenSq1 * lenSq2));
+
+
+
+//    float heading, attitude,bank;
+//    double s=sin(angle);
+//    double c=cos(angle);
+//    double t=1-c;
+//    //  if axis is not already normalised then uncomment this
+//    // double magnitude = sqrt(x*x + y*y + z*z);
+//    // if (magnitude==0) throw error;
+//    // x /= magnitude;
+//    // y /= magnitude;
+//    // z /= magnitude;
+//    if ((rotationAxis.m_x*rotationAxis.m_y*t + rotationAxis.m_z*s) > 0.998) { // north pole singularity detected
+//        heading = 2*atan2(rotationAxis.m_x*sin(angle/2),cos(angle/2));
+//        attitude = M_PI/2;
+//        bank = 0;
+//        return;
+//    }
+//    if ((rotationAxis.m_x*rotationAxis.m_y*t + rotationAxis.m_z*s) < -0.998) { // south pole singularity detected
+//        heading = -2*atan2(rotationAxis.m_x*sin(angle/2),cos(angle/2));
+//        attitude = -M_PI/2;
+//        bank = 0;
+//        return;
+//    }
+//    heading = atan2(rotationAxis.m_y * s- rotationAxis.m_x * rotationAxis.m_z * t , 1 - (rotationAxis.m_y*rotationAxis.m_y+ rotationAxis.m_z*rotationAxis.m_z ) * t);
+//    attitude = asin(rotationAxis.m_x * rotationAxis.m_y * t + rotationAxis.m_z * s) ;
+//    bank = atan2(rotationAxis.m_x * s - rotationAxis.m_y * rotationAxis.m_z * t , 1 - (rotationAxis.m_x*rotationAxis.m_x + rotationAxis.m_z*rotationAxis.m_z) * t);
+
+
+//    m_transform.setRotation(bank*(180/M_PI),heading*(180/M_PI),attitude*(180/M_PI));
+
+
+
+    //  Calculate the angle and the rotation axis between the 2 vectors,
+    ngl::Vec3 v1=ballcenterInit;
+    ngl::Vec3 v2=planeCenter;
+    v1.normalize();
+    v2.normalize();
+    float angle = acos(v1.dot(v2));
+    ngl::Vec3 rotationAxis = v1.cross(v2);
+    rotationAxis.normalize();
+
+    //create the translation and rotation matrices
+    ngl::Mat4 rotateMat = 1;
+    rotateMat=matrixFromAxisAngle(rotationAxis,angle);
+    ngl::Mat4 translateMat = 1;
+    //draw the ground on the origin
+    translateMat.translate(planeCenter.m_x,planeCenter.m_y,planeCenter.m_z);
+
+    //Multiply the matrices all together
+    /*IMPORTANT NOTE: in NGL we need to specify the order of multiplication as we think it.
+     * so rotate and then translate = rotateMat*translateMat, whereas usually in raw opengl or glm libray
+     * we do it the other way around and so: rotate and then translate would equal to: translateMat*rotateMat
+    */
+
+    ngl::Mat4 finalMatrix=rotateMat*translateMat;//no scale for now, just don't care about it in this example
+
+    //set the m_transform matrix to finalMatrix (extra step not usually needed-happens because of the way we call loadMatricesToShader(m_transform,...))
+    m_transform.setMatrix(finalMatrix);
 
     loadMatricesToShader (m_transform,m_mouseGlobalTX, m_cam);
-    shader->setShaderParam4f("Colour",1,1,0,1);
+    shader->setShaderParam4f("Colour",0,1,0,1);
     prim->draw ("ground");
+
+
+    //***********************Artificially negate the rotation of the 1st ground to create a 2nd ground //***********************
+    v1=artificialMirrorBallvec;
+    v2=planeCenter;
+    v1.normalize();
+    v2.normalize();
+    angle = acos(v1.dot(v2));
+    rotationAxis = v1.cross(v2);
+    rotationAxis.normalize();
+    rotateMat=matrixFromAxisAngle(rotationAxis,angle);
+    finalMatrix=rotateMat*translateMat;//no scale for now, just don't care about it in this example
+
+    //set the m_transform matrix to finalMatrix (extra step not usually needed-happens because of the way we call loadMatricesToShader(m_transform,...))
+    m_transform.setMatrix(finalMatrix);
+
+    loadMatricesToShader (m_transform,m_mouseGlobalTX, m_cam);
+    shader->setShaderParam4f("Colour",0,0,1,1);
+    prim->draw ("ground2");
+
 
 
     glEnable(GL_DEPTH_TEST);
@@ -196,6 +320,43 @@ void NGLScene::paintGL ()
     glEnable(GL_MULTISAMPLE);
 
 
+}
+
+
+
+ngl::Mat4 NGLScene::matrixFromAxisAngle(ngl::Vec3 axis, float angle) {
+
+    ngl::Mat4 tmp=1;
+
+    double c = cos(angle);
+    double s = sin(angle);
+    double t = 1.0 - c;
+    //  if axis is not already normalised then uncomment this
+    // double magnitude = sqrt(axis.x*axis.x + axis.m_y*axis.m_y + axis.m_z*axis.m_z);
+    // if (magnitude==0) throw error;
+    // axis.x /= magnitude;
+    // axis.m_y /= magnitude;
+    // axis.m_z /= magnitude;
+
+    tmp.m_00 = c + axis.m_x*axis.m_x*t;
+    tmp.m_11 = c + axis.m_y*axis.m_y*t;
+    tmp.m_22 = c + axis.m_z*axis.m_z*t;
+
+
+    double tmp1 = axis.m_x*axis.m_y*t;
+    double tmp2 = axis.m_z*s;
+    tmp.m_10 = tmp1 + tmp2;
+    tmp.m_01 = tmp1 - tmp2;
+    tmp1 = axis.m_x*axis.m_z*t;
+    tmp2 = axis.m_y*s;
+    tmp.m_20 = tmp1 - tmp2;
+    tmp.m_02 = tmp1 + tmp2;
+    tmp1 = axis.m_y*axis.m_z*t;
+    tmp2 = axis.m_x*s;
+    tmp.m_21 = tmp1 + tmp2;
+    tmp.m_12 = tmp1 - tmp2;
+
+    return tmp;
 }
 
 
@@ -217,7 +378,8 @@ void NGLScene::updateBall()
     //recalculate velocity if ball collided to the ground collided
 
 
-    bool collided = Collision::SphereToPlane (myball, planeCenter, planeNormal);
+    bool collidedwithPlane = Collision::SphereToPlane (myball, planeCenter, planeNormal);
+    bool collidedwithPlane2 = Collision::SphereToPlane (myball, planeCenter, planeNormal2);
 
 
 
@@ -237,9 +399,11 @@ void NGLScene::updateBall()
 
     //calculate force
     ngl::Vec3 force;
+    ngl::Vec3 extraPushForce(0,-100,0.0);
     force.m_y= gravity * ballMass;
+
     //calculate acceleration
-    ngl::Vec3 accel = force / ballMass;
+    ngl::Vec3 accel = (force+extraPushForce) / ballMass;
     std::cout<<accel.m_x<<accel.m_y<<accel.m_z<<std::endl;
     //calculate velocity Euler
     //    myball.m_velocity += accel * dt;
@@ -249,9 +413,11 @@ void NGLScene::updateBall()
     myball.m_velocity = myball.m_velocity + accel * dt;
 
 
-    //check if collided
-    if (collided)
-        myball.m_velocity = calculateCollisionResponse();
+    //check if collided collidedwithPlane
+    if (collidedwithPlane)
+        myball.m_velocity = calculateCollisionResponse(planeNormal);
+    if (collidedwithPlane2)
+        myball.m_velocity = calculateCollisionResponse(planeNormal2);
 
 
     //FRICTION CALCULATION
@@ -276,7 +442,7 @@ void NGLScene::updateBall()
     //update ball position based on velocity (Forward Euler Integration)
     //    myball.m_center+= myball.m_velocity *dt;
 
-    //update ball position based on velocity (Velocity Verletr Integration)
+    //update ball position based on velocity (Velocity Verlet Integration)
     myball.m_center = myball.m_center + (prevVel + myball.m_velocity) * 0.5 * dt;
 
 
@@ -298,13 +464,13 @@ n in the contact normal for the collision
  */
 
 #define MAX(x,y) (((x) < (y)) ? (y) : (x))
-float NGLScene::e=0.5; //when e=0 ->  collision is perfectly inelastic, when e=1 ->  collision is perfectly elastic;
-ngl::Vec3 NGLScene::calculateCollisionResponse()
+float NGLScene::e=0.81; //when e=0 ->  collision is perfectly inelastic, when e=1 ->  collision is perfectly elastic;
+ngl::Vec3 NGLScene::calculateCollisionResponse(const ngl::Vec3 & normal)
 {
-    float d = myball.m_velocity.dot (planeNormal);
+    float d = myball.m_velocity.dot (normal);
     float mag= - ( 1 + e ) * d;
     float j = MAX( mag, 0.0 );
-    myball.m_velocity += j* planeNormal;
+    myball.m_velocity += j* normal;
     return myball.m_velocity;
 }
 

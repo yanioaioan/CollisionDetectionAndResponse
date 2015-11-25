@@ -46,7 +46,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
+       <item row="7" column="1">
         <widget class="QPushButton" name="pushButton">
          <property name="text">
           <string>Simulate</string>
@@ -56,11 +56,11 @@
        <item row="2" column="1">
         <widget class="QDoubleSpinBox" name="restcoefSpinBox">
          <property name="value">
-          <double>0.500000000000000</double>
+          <double>0.810000000000000</double>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="4" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -72,6 +72,30 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="3" column="1">
+        <widget class="QPlainTextEdit" name="plainTextEdit">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>180</width>
+           <height>300</height>
+          </size>
+         </property>
+         <property name="plainText">
+          <string> The International Table Tennis Federation specifies that the ball shall bounce up 24–26 cm when dropped from a height of 30.5 cm on to a standard steel block thereby having a COR of 0.89 to 0.92.[9] For a hard linoleum floor with concrete underneath, a leather basketball has a COR around 0.81-0.85.[10]
+
+https://en.wikipedia.org/wiki/Coefficient_of_restitution</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -97,7 +121,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>27</height>
     </rect>
    </property>
   </widget>

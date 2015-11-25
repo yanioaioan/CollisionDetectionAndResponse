@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.3.1
+** Created by: Qt User Interface Compiler version 5.5.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -20,6 +20,7 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
@@ -43,6 +44,7 @@ public:
     QPushButton *pushButton;
     QDoubleSpinBox *restcoefSpinBox;
     QSpacerItem *verticalSpacer;
+    QPlainTextEdit *plainTextEdit;
     QSpacerItem *horizontalSpacer;
     QMenuBar *menubar;
     QStatusBar *statusbar;
@@ -90,17 +92,29 @@ public:
         pushButton = new QPushButton(groupBox_2);
         pushButton->setObjectName(QStringLiteral("pushButton"));
 
-        gridLayout_3->addWidget(pushButton, 6, 1, 1, 1);
+        gridLayout_3->addWidget(pushButton, 7, 1, 1, 1);
 
         restcoefSpinBox = new QDoubleSpinBox(groupBox_2);
         restcoefSpinBox->setObjectName(QStringLiteral("restcoefSpinBox"));
-        restcoefSpinBox->setValue(0.5);
+        restcoefSpinBox->setValue(0.81);
 
         gridLayout_3->addWidget(restcoefSpinBox, 2, 1, 1, 1);
 
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        gridLayout_3->addItem(verticalSpacer, 3, 1, 1, 1);
+        gridLayout_3->addItem(verticalSpacer, 4, 1, 1, 1);
+
+        plainTextEdit = new QPlainTextEdit(groupBox_2);
+        plainTextEdit->setObjectName(QStringLiteral("plainTextEdit"));
+        plainTextEdit->setEnabled(true);
+        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(plainTextEdit->sizePolicy().hasHeightForWidth());
+        plainTextEdit->setSizePolicy(sizePolicy);
+        plainTextEdit->setMaximumSize(QSize(180, 300));
+
+        gridLayout_3->addWidget(plainTextEdit, 3, 1, 1, 1);
 
 
         gridLayout->addWidget(groupBox_2, 1, 1, 1, 1);
@@ -112,7 +126,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 800, 23));
+        menubar->setGeometry(QRect(0, 0, 800, 27));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -130,6 +144,9 @@ public:
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Draw", 0));
         label->setText(QApplication::translate("MainWindow", "e: Restitution Coeficient", 0));
         pushButton->setText(QApplication::translate("MainWindow", "Simulate", 0));
+        plainTextEdit->setPlainText(QApplication::translate("MainWindow", " The International Table Tennis Federation specifies that the ball shall bounce up 24\342\200\22326 cm when dropped from a height of 30.5 cm on to a standard steel block thereby having a COR of 0.89 to 0.92.[9] For a hard linoleum floor with concrete underneath, a leather basketball has a COR around 0.81-0.85.[10]\n"
+"\n"
+"https://en.wikipedia.org/wiki/Coefficient_of_restitution", 0));
     } // retranslateUi
 
 };
