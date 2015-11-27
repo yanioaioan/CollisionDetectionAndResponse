@@ -6,6 +6,7 @@
 #include <ngl/VAOPrimitives.h>
 #include <ngl/ShaderLib.h>
 #include <math.h>
+#include <ngl/Quaternion.h>
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @brief the increment for x/y translation with mouse movement
@@ -25,6 +26,12 @@ ngl::Vec3 artificialMirrorBallvec((-5,20,0));//used to create the 2nd ground
 
 const static float gravity=-9.81;
 
+
+ngl::Vec3 angularMomentum(0,0,0);
+ngl::Vec3 angularVelocity(0,0,0);
+ngl::Quaternion q;
+
+
 NGLScene::NGLScene()
 {
     setFocusPolicy(Qt::StrongFocus);//to make the keyevents respond
@@ -34,7 +41,7 @@ NGLScene::NGLScene()
     // mouse rotation values set to 0
     m_spinXFace=0;
     m_spinYFace=0;
-    updateTimer=startTimer(10);
+    updateTimer=startTimer(200);
     m_animate=true;
     startSimPressed=false;
 }
@@ -155,6 +162,8 @@ void NGLScene::loadMatricesToShader(ngl::Transformation &_transform, const ngl::
 
 float planeThetaCos;
 
+static int rot;
+
 void NGLScene::paintGL ()
 {
     // clear the screen and depth buffer
@@ -180,10 +189,21 @@ void NGLScene::paintGL ()
 
     //draw the ball according to its center
     m_transform.setPosition (myball.m_center);
+
+    ngl::Mat4 transMat(m_transform.getMatrix());
+    ngl::Mat4 rotatMat(q.toMat4());//update ball rotation
+
+    ngl::Mat4 finalMat=rotatMat*transMat;
+
+    m_transform.setMatrix(finalMat);
+
+//    m_transform.setPosition(myball.m_center);
+//    m_transform.setRotation(rot,rot,rot++);
+
     loadMatricesToShader (m_transform,m_mouseGlobalTX, m_cam);
 
     shader->setShaderParam4f("Colour",1,0,0,1);
-    prim->draw ("ball");
+    prim->draw ("cube");
 
 
 
@@ -369,6 +389,10 @@ void NGLScene::testButtonClicked(bool b)
     update ();
 }
 
+
+
+
+
 const static float acceleration=0;
 void NGLScene::updateBall()
 {
@@ -399,18 +423,70 @@ void NGLScene::updateBall()
 
     //calculate force
     ngl::Vec3 force;
-    ngl::Vec3 extraPushForce(0,-100,0.0);
+    ngl::Vec3 extraPushForce(0,-100,0);
     force.m_y= gravity * ballMass;
 
     //calculate acceleration
     ngl::Vec3 accel = (force+extraPushForce) / ballMass;
     std::cout<<accel.m_x<<accel.m_y<<accel.m_z<<std::endl;
-    //calculate velocity Euler
+    //calculate velocity Euler integration
     //    myball.m_velocity += accel * dt;
 
-    //calculate velocity Velocity Verlet
+    //calculate linear Velocity Verlet integration
     prevVel=myball.m_velocity;
     myball.m_velocity = myball.m_velocity + accel * dt;
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //calculate angular Velocity Verlet integration
+
+    if(angularVelocity!=0)
+    {
+        q=((q + (0.5 * dt)) * ngl::Quaternion (0,angularVelocity.m_x,angularVelocity.m_y,angularVelocity.m_z));
+        q.normalise();
+    }
+
+
+    ngl::Vec3 externalTorque(0.1,0.001,0);
+    // update angularMomentum
+    angularMomentum.m_x += dt * externalTorque.m_x;
+    angularMomentum.m_y += dt * externalTorque.m_y;
+    angularMomentum.m_z += dt * externalTorque.m_z;
+
+    // reconstruct the rotation matrix
+    ngl::Mat4 R = q.toMat4();
+
+
+    // reconstruct angular velocity
+    // computes the angular velocity from the angular momentum
+    // using the current rotation matrix
+    // inertia tensor at rest is diagonal
+    // 33 flops
+
+    double temp0, temp1, temp2;
+
+    // temp = R^T * L
+    temp0 = R.m_00 * angularMomentum.m_x + R.m_01 * angularMomentum.m_y + R.m_02 * angularMomentum.m_z;
+    temp1 = R.m_10 * angularMomentum.m_x + R.m_11 * angularMomentum.m_y + R.m_12 * angularMomentum.m_z;
+    temp2 = R.m_20 * angularMomentum.m_x + R.m_21 * angularMomentum.m_y + R.m_22 * angularMomentum.m_z;
+
+
+
+    ngl::Vec3 inertiaTensorAtRest(1,1,1);
+    ngl::Vec3 inverseInertiaTensorAtRest(1/inertiaTensorAtRest.m_x, 1/inertiaTensorAtRest.m_y, 1/inertiaTensorAtRest.m_z);
+
+    // temp = I^{body}^{-1} * temp = diag(invIBodyX, invIBodyY, invIBodyZ) * temp;
+    temp0 = inverseInertiaTensorAtRest.m_x * temp0;
+    temp1 = inverseInertiaTensorAtRest.m_y * temp1;
+    temp2 =inverseInertiaTensorAtRest.m_z * temp2;
+
+    // angularVelocity = R * temp
+    angularVelocity.m_x =  R.m_00 * temp0 +  R.m_01 * temp1 +  R.m_02 * temp2;
+    angularVelocity.m_y =  R.m_10 * temp0 +  R.m_11 * temp1 +  R.m_12 * temp2;
+    angularVelocity.m_z =  R.m_20 * temp0 +  R.m_21 * temp1 +  R.m_22 * temp2;
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
     //check if collided collidedwithPlane
